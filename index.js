@@ -1,61 +1,43 @@
 const express = require('express');
+const userRoutes = require('./routes/userRoutes.js');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-// Middleware to parse JSON request body
-app.use(express.json());
-
-// Swagger definition
+// Swagger 設定
 const swaggerOptions = {
   swaggerDefinition: {
-    openapi: '3.0.0',
+    openapi: '3.0.0', // 使用 OpenAPI 3.0.0
     info: {
-      title: 'Simple Express API',
-      version: '1.0.0',
-      description: 'A simple Express API documented with Swagger',
-      contact: {
-        name: 'Developer',
-      },
-      servers: [{ url: 'http://localhost:3000' }],
+      title: 'My API', // API 標題
+      version: '1.0.0', // API 版本
+      description: 'API documentation for my Express app', // 描述
     },
+    servers: [
+      {
+        url: `http://localhost:${port}/api`, // 基本 URL
+      },
+    ],
   },
-  apis: ['./index.js'], // Files containing annotations for API documentation
+  apis: ['./routes/*.js'], // 指向包含註解的路由文件
 };
 
-// Initialize swagger-jsdoc
+// 創建 Swagger 文檔
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
-// Setup the swagger UI
-app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+// 使用 Swagger UI 中介軟體
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// A simple route
-app.get('/', (req, res) => {
-  res.send('Hello, world!');
-});
+// Middleware
+app.use(express.json()); // 解析 JSON 請求體
 
-/**
- * @swagger
- * /api:
- *   get:
- *     summary: Get a simple message from the API
- *     responses:
- *       200:
- *         description: A JSON object with a message
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- */
-app.get('/api', (req, res) => {
-  res.json({ message: 'This is your first API route!' });
-});
+// Routes
+app.use('/api/users', userRoutes);
 
-// Start the server
+// 啟動服務
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Swagger documentation available at http://localhost:${port}/api-docs`);
 });
