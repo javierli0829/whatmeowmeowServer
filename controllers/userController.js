@@ -53,3 +53,41 @@ exports.getAllUsers = async (req, res) => {
     res.status(500).json({ message: 'Error fetching users', error });
   }
 };
+
+/**
+ * @swagger
+ * /users/transaction:
+ *   post:
+ *     summary: Create a new transaction
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type:
+ *                 type: string
+ *               amount:
+ *                 type: number
+ *               description:
+ *                 type: string
+ *               timestamp:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Transaction created successfully
+ *       500:
+ *         description: Error creating transaction
+ */
+
+exports.addTransaction = async (req, res) => {
+  const { type, amount, description, timestamp } = req.body;
+  try {
+    const newTransactionRef = db.ref('transactions').push();
+    await newTransactionRef.set({ type, amount, description, timestamp });
+    res.status(201).json({ id: newTransactionRef.key ,type, amount, description, timestamp });
+  }catch (error) {
+    res.status(500).json({ message: 'Error creating transaction', error });
+  }
+};
