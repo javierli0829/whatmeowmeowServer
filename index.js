@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const userRoutes = require('./routes/userRoutes.js');
+const transactionRoutes = require('./routes/transactionRoutes.js');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
@@ -8,20 +8,20 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(express.json()); // 解析 JSON 請求體
+app.use(express.json()); // Parse JSON request body
 
-// 啟用 CORS
+// Enable CORS
 app.use(cors({
-  origin: 'http://localhost:4200', // 指定允許的來源，或使用 '*' 允許所有來源
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // 允許的 HTTP 方法
-  allowedHeaders: ['Content-Type', 'Authorization'], // 允許的標頭
-  credentials: true // 如果請求需要 cookie 或憑證，啟用此選項
+  origin: '*', // Specify allowed origins, or use '*' to allow all origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+  credentials: true // Enable this option if requests require cookies or credentials
 }));
 
-// 處理所有路由的預檢請求（OPTIONS）
+// Handle preflight requests (OPTIONS) for all routes
 app.options('*', cors());
 
-// Swagger 設定
+// Swagger configuration
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: '3.0.0',
@@ -32,23 +32,23 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://localhost:${port}/api`, // 基本 URL
+        url: `http://localhost:${port}`, // Base URL
       },
     ],
   },
-  apis: ['./routes/*.js'], // 指向包含註解的路由文件
+  apis: ['./routes/*.js'], // Pointing to route files containing comments
 };
 
-// 創建 Swagger 文檔
+// Create Swagger documentation
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
-// 使用 Swagger UI 中介軟體
+// Use Swagger UI middleware
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Routes
-app.use('/api/users', userRoutes);
+app.use('/transactions', transactionRoutes);
 
-// 啟動服務
+// Start server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
   console.log(`Swagger documentation available at http://localhost:${port}/api-docs`);
