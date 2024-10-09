@@ -20,7 +20,7 @@ exports.getTrasactions = async (req, res) => {
     const transactionsArray = transactions ? Object.values(transactions) : [];
 
     const filteredTransactions = transactionsArray.filter(transaction => {
-      return transaction.timestamp === timestamp;
+      return new Date(transaction.timestamp).toLocaleDateString() === new Date(timestamp).toLocaleDateString();
     });
 
     res.status(200).json(filteredTransactions);
