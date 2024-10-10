@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const transactionRoutes = require('./routes/transactionRoutes.js');
+const taiwanStockRoutes = require('./routes/taiwanStockRoutes.js');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
@@ -47,6 +48,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Routes
 app.use('/transactions', transactionRoutes);
+app.use('/taiwanStock', taiwanStockRoutes);
 
 // Start server
 app.listen(port, () => {
